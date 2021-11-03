@@ -16,9 +16,17 @@
   (dr/initialize! app) ; make ready, if you want to use dynamic routing...
 
   ;; Not how it's supposed to be done
-  ;; load! will create a join between the resolver attribute (in this case :all-data) and the query of the component given (in this case LeftSidebar)
+  ;; load! will create a join between the resolver attribute
+  ;; (in this case :left-sidebar) and the query of the component given (in this case LeftSidebar)
   ;;
-  (df/load! app :all-data ui/Root)
+  (do
+    ;;(df/load! app :all-data ui/Root)
+    ;;(df/load! app :all-tasks ui/Task)
+    ;;(df/load! app :all-tags ui/Tag)
+    ;;(df/load! app :all-sprints ui/Sprint)
+    ;;(df/load! app :all-projects ui/Project)
+    (df/load! app :left-sidebar ui/LeftSidebar)
+    )
 
   (app/mount! app
               (app/root-class app)
