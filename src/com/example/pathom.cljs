@@ -50,9 +50,9 @@
                                                                                                                                        #:tag{:id 2 :desc "Important"}]}
                                    #:task{:id 11 :desc "KosmoTime (Dreamcast Version)" :status :not-started :link "www.kosmotime.com" :tags [#:tag{:id 2 :desc "Important"}]}]}
                   :projects      [
-                                  #:project{:id 1 :desc "KosmoTimeApp" :tasks [#:task{:id 12 :desc "Foo"}]}
-                                  #:project{:id 2 :desc "Private Stuff" :tasks [#:task{:id 13 :desc "Bar"}]}
-                                  #:project{:id 3 :desc "KosmoTimeApp" :tasks [#:task{:id 14 :desc "Bing"}]}
+                                  #:project{:id 1 :desc "KosmoTimeApp" :tasks [#:task{:id 12 :desc "Foo" :status :not-started :link "www.foo.com" :tags []}]}
+                                  #:project{:id 2 :desc "Private Stuff" :tasks [#:task{:id 13 :desc "Bar" :status :not-started :link "www.foo.com" :tags []}]}
+                                  #:project{:id 3 :desc "KosmoTimeApp" :tasks [#:task{:id 14 :desc "Bing" :status :not-started :link "www.foo.com" :tags []}]}
                                   ]
                   :tags          [
                                   #:tag{:id 1 :desc "Urgent"}
@@ -61,12 +61,12 @@
                                   #:tag{:id 4 :desc "Bug"}
                                   #:tag{:id 5 :desc "Won't Fix"}]}})
 
-(pc/defresolver all-tasks
+(pc/defresolver tasks
   "Dummy resolver that returns tasks for debugging purposes"
   [env _]
   {::pc/input  #{}
-   ::pc/output [:all-tasks]}
-  {:all-tasks
+   ::pc/output [:tasks]}
+  {:tasks
    [#:task{:id 1 :desc "Set up OKR Meetings" :status :not-started :link "www.kosmotime.com"}
     #:task{:id 2 :desc "Checklist for the PH" :status :not-started :link "www.kosmotime.com" :tags [#:tag{:id 1 :desc "Urgent"}]}
     #:task{:id 3 :desc "LinkedIn Strategy" :status :not-started :link ""}
@@ -82,24 +82,24 @@
     #:task{:id 11 :desc "KosmoTime (Dreamcast Version)" :status :not-started :link "www.kosmotime.com" :tags [#:tag{:id 2 :desc "Important"}]}]})
 
 ;; QUESTION: Should resolvers return normalized or denormalized data??
-(pc/defresolver all-tags
+(pc/defresolver tags
   "Pathom resolver that returns all tags for debugging purposes"
   [env _]
   {::pc/input  #{}
-   ::pc/output [:all-tags]}
-  {:all-tags
+   ::pc/output [:tags]}
+  {:tags
    [#:tag{:id 1 :desc "Urgent"}
     #:tag{:id 2 :desc "Important"}
     #:tag{:id 3 :desc "Priority"}
     #:tag{:id 4 :desc "Bug"}
     #:tag{:id 5 :desc "Won't Fix"}]})
 
-(pc/defresolver all-sprints
+(pc/defresolver sprints
   "Pathom resolver that returns all sprints for debugging purposes"
   [env _]
   {::pc/input  #{}
-   ::pc/output [:all-sprints]}
-  {:all-sprints
+   ::pc/output [:sprints]}
+  {:sprints
    [
     #:sprint{:id 1 :desc "App Related Sprint"
              :tasks
@@ -109,12 +109,12 @@
     #:sprint{:id 2 :desc "Planning for the New Website" :tasks []}
     #:sprint{:id 3 :desc "Product Strategy" :tasks []}]})
 
-(pc/defresolver all-projects
+(pc/defresolver projects
   "Pathom resolver that returns all projects for debugging purposes"
   [env _]
   {::pc/input  #{}
-   ::pc/output [:all-projects]}
-  {:all-projects
+   ::pc/output [:projects]}
+  {:projects
    [
     #:project{:id 1 :desc "KosmoTimeApp" :tasks [#:task{:id 12 :desc "Foo"}]}
     #:project{:id 2 :desc "Private Stuff" :tasks [#:task{:id 13 :desc "Bar"}]}
@@ -168,7 +168,8 @@
 
 (def my-resolvers-and-mutations
   "Add any resolvers you make to this list (and reload to re-create the parser)"
-  [index-explorer create-random-thing i-fail left-sidebar])
+  [index-explorer create-random-thing i-fail]
+  )
 
 (defn new-parser
   "Create a new Pathom parser with the necessary settings"

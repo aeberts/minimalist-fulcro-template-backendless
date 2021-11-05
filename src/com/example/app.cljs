@@ -23,4 +23,6 @@
                                 (println "WARN: Remote call failed"
                                          status-code
                                          error-text
-                                         (:com.wsscode.pathom.core/errors body)))}))
+                                         (:com.wsscode.pathom.core/errors body)))
+                              :render-middleware
+                              (when goog.DEBUG js/holyjak.fulcro_troubleshooting.troubleshooting_render_middleware)}))
