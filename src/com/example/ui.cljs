@@ -1,5 +1,6 @@
 (ns com.example.ui
   (:require
+    [cljs.pprint :as pp]
     [com.example.mutations :as mut]
     [com.fulcrologic.fulcro.application :as app]
     [com.fulcrologic.fulcro.algorithms.merge :as merge]
@@ -9,7 +10,7 @@
     [com.fulcrologic.fulcro.components :as comp :refer [defsc transact!]]
     [com.fulcrologic.fulcro.raw.components :as rc]
     [com.fulcrologic.fulcro.data-fetch :as df]
-    [com.fulcrologic.fulcro.dom :as dom :refer [button div form h1 h2 h3 input label li ol p ul]]))
+    [com.fulcrologic.fulcro.dom :as dom :refer [button div form h1 h2 h3 input label li ol p ul pre]]))
 
 (defsc Tag [this {:tag/keys [:id :desc] :as props}]
   {:query         [:tag/id :tag/desc]
@@ -77,10 +78,11 @@
                    {:tags (comp/get-query Tag)}
                    ]
    :ident         (fn [] [:component/id :Menu])
-   :initial-state {}
+   :initial-state (fn [params] {:today         (comp/get-initial-state TodayPane)
+                                :uncategorized (comp/get-initial-state Uncategorized)})
    }
-  #_(div
-    (p "Left Sidebar: " props)
+  (div
+    (pre "Menu props: \n " (pp/write props :stream nil))
     (ui-today-pane today)))
 
 (def ui-menu (comp/factory Menu))
@@ -93,35 +95,48 @@
 ;;
 ;;(def ui-calendar-pane (comp/factory CalendarPane))
 
-(defsc Root [this {:keys [task-filters selected-list sprints tasks] :as props}]
-  {:query [
+(defsc Root [this {:keys [task-filters selected-list sprints tasks today] :as props}]
+  {:query [:selected-list
            {:task-filters (comp/get-query Menu)}
-           :selected-list
            {:tasks (comp/get-query Task)}
-           {:sprints (comp/get-query Sprint)}]
+           {:sprints (comp/get-query Sprint)}
+           {:today (comp/get-query TodayPane)}]
    :initial-state
           (fn [_]
-            {
-             :task-filters  {:projects ["Home" "Work"] :tags ["Important" "Urgent"]}
-             :selected-list :today
-             :tasks         [#:task{:id 1 :desc "Set up OKR Meetings" :status :not-started :link "www.kosmotime.com"}
-                             #:task{:id 2 :desc "Checklist for the PH" :status :not-started :link "www.kosmotime.com" :tags [#:tag{:id 1 :desc "Urgent"}]}
-                             #:task{:id 3 :desc "LinkedIn Strategy" :status :not-started :link "www.linkedin.com"}]
-             :sprints       [#:sprint{:id 1 :desc "App Related Sprint"
-                                      :tasks
-                                          [#:task{:id 1 :desc "Set up OKR Meetings" :status :not-started :link "www.kosmotime.com"}
-                                           #:task{:id 2 :desc "Checklist for the PH" :status :not-started :link "www.kosmotime.com" :tags [#:tag{:id 1 :desc "Urgent"}]}
-                                           #:task{:id 3 :desc "LinkedIn Strategy" :status :not-started :link "www.linkedin.com"}]}
-                             #:sprint{:id 2 :desc "Planning for the New Website" :tasks []}
-                             #:sprint{:id 3 :desc "Product Strategy" :tasks []}]
+            {:selected-list :today
+             :task-filters  {:projects [#:project{:id 1 :desc "Home"}
+                                        #:project{:id 2 :desc "Work"}]
+                             :tags     [#:tag{:id 1 :desc "Urgent"}
+                                        #:tag{:id 2 :desc "Important"}]}
+             :today         {:tasks   [#:task{:id 1 :desc "Set up OKR Meetings" :status :not-started :link "www.kosmotime.com"}
+                                       #:task{:id 2 :desc "Checklist for the PH" :status :not-started :link "www.kosmotime.com" :tags [#:tag{:id 1 :desc "Urgent"}]}
+                                       #:task{:id 3 :desc "LinkedIn Strategy" :status :not-started :link "www.linkedin.com"}]
+                             :sprints [#:sprint{:id 1 :desc "App Related Sprint"
+                                                :tasks
+                                                    [#:task{:id 1 :desc "Set up OKR Meetings" :status :not-started :link "www.kosmotime.com"}
+                                                     #:task{:id 2 :desc "Checklist for the PH" :status :not-started :link "www.kosmotime.com" :tags [#:tag{:id 1 :desc "Urgent"}]}
+                                                     #:task{:id 3 :desc "LinkedIn Strategy" :status :not-started :link "www.linkedin.com"}]}
+                                       #:sprint{:id 2 :desc "Planning for the New Website" :tasks []}
+                                       #:sprint{:id 3 :desc "Product Strategy" :tasks []}]}
+
              }
             )
    }
-  (div {:style {:border "1px dashed", :margin "1em", :padding "1em"}}
-    (p "Hello from the ui/Root component!")
-    (p (pr-str props))
-    (ui-menu task-filters)
+  (div {:style {:border "1px dashed", :borderColor "red" :margin "1em", :padding "1em"}}
+    (div
+      (p "Left Menu Pane:")
+      (ui-menu task-filters))
+    (cond
+      (= selected-list :today) (ui-menu today)
+
+      )
     ))
+
+(comment
+
+  (cljs.pprint/write {:a 1 :b 2} :stream nil)
+
+  )
 
 (defn check-props
   "Check the state for particular component
