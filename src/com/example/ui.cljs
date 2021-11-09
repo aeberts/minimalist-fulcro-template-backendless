@@ -82,8 +82,8 @@
                                 :uncategorized (comp/get-initial-state Uncategorized)})
    }
   (div
-    (pre "Menu props: \n " (pp/write props :stream nil))
-    (ui-today-pane today)))
+    ;(pre "Menu props: \n " (pp/write props :stream nil))
+    ))
 
 (def ui-menu (comp/factory Menu))
 
@@ -123,14 +123,16 @@
             )
    }
   (div {:style {:border "1px dashed", :borderColor "red" :margin "1em", :padding "1em"}}
-    (div
-      (p "Left Menu Pane:")
-      (ui-menu task-filters))
-    (cond
-      (= selected-list :today) (ui-menu today)
+    (p "Left Menu Pane:")
+    (div :.ui-container
+      (div :.ui-grid
+        (div :.sixteen.wide.mobile.four.wide.computer.column
+          (ui-menu task-filters))
+        (div :.sixteen.wide.mobile.twelve.wide.computer.column
+          (cond
+            (= selected-list :today) (ui-today-pane today)))
 
-      )
-    ))
+        ))))
 
 (comment
 
