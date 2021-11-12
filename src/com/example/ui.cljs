@@ -63,8 +63,8 @@
 (def ui-project (comp/factory Project {:keyfn :id}))
 
 (defsc CalendarItem [this {:calendar-item/keys [id desc start-time end-time] :as props}]
-  {:query [:calendar-item/id :calendar-item/desc :calendar-item/start-time :calendar-item/end-time]
-   :ident :calendar-item/id
+  {:query         [:calendar-item/id :calendar-item/desc :calendar-item/start-time :calendar-item/end-time]
+   :ident         :calendar-item/id
    :initial-state (fn [params] {})}
   (div
     (p "Calendar item")))
@@ -72,8 +72,8 @@
 (def ui-calender-item (comp/factory CalendarItem {:keyfn :id}))
 
 (defsc Calendar [this {:keys [:calendar-items] :as props}]
-  {:query [{:calendar-items (comp/get-query CalendarItem)}]
-   :ident (fn [] [:component/id ::Calendar])
+  {:query         [{:calendar-items (comp/get-query CalendarItem)}]
+   :ident         (fn [] [:component/id ::Calendar])
    :initial-state {}}
   (dom/div
     (p "Calendar Pane")))
@@ -81,13 +81,14 @@
 (def ui-calendar (comp/factory Calendar))
 
 (defsc Today [this {:keys [tasks sprints] :as props}]
-  {:query         [:sprints :tasks]
+  {:query         [{:tasks (comp/get-query Task)}
+                   {:sprints (comp/get-query Sprint)}]
    :ident         (fn [] [:component/id ::Today])
-
-   }
+   :initial-state (fn [params] {:tasks   {}
+                                :sprints {}})}
   (div
     (p "Today Pane")
-    ;(pre (pp/write (str props) :stream nil))
+    ;;(pre (pp/write (str props) :stream nil))
     ))
 
 (def ui-today (comp/factory Today))
@@ -97,7 +98,7 @@
                    {:tags (comp/get-query Tag)}]
    :ident         (fn [] [:component/id ::Menu])
    :initial-state (fn [params] {:projects {}
-                                :tags {}})}
+                                :tags     {}})}
   (div
     (p "Menu Pane")
     ;(pre (pp/write (str props) :stream nil))
@@ -111,36 +112,37 @@
            {:today (comp/get-query Today)}
            {:calendar (comp/get-query Calendar)}]
    :initial-state
-          (fn [_]
-            {:selected-list :today
-             :task-filters  {:projects [[:project/id 1] [:project/id 2]]
-                             :tags     [[:tag/id 1] [:tag/id 2]]}
-             :today         {:tasks   [#:task{:id 1 :desc "Set up OKR Meetings" :status :not-started :link "www.kosmotime.com"}
-                                       #:task{:id 2 :desc "Checklist for the PH" :status :not-started :link "www.kosmotime.com" :tags [#:tag{:id 1 :desc "Urgent"}]}
-                                       #:task{:id 3 :desc "LinkedIn Strategy" :status :not-started :link "www.linkedin.com"}]
-                             :sprints [#:sprint{:id 1 :desc "App Related Sprint"
-                                                :tasks
-                                                    [#:task{:id 4 :desc "Set up OKR Meetings" :status :not-started :link "www.kosmotime.com"}
-                                                     #:task{:id 5 :desc "Checklist for the PH" :status :not-started :link "www.kosmotime.com" :tags [#:tag{:id 1 :desc "Urgent"}]}
-                                                     #:task{:id 6 :desc "LinkedIn Strategy" :status :not-started :link "www.linkedin.com"}]}
-                                       #:sprint{:id 2 :desc "Planning for the New Website" :tasks []}
-                                       #:sprint{:id 3 :desc "Product Strategy" :tasks []}]}
-             :tags [#:tag{:id 1 :desc "Urgent"}
-                    #:tag{:id 2 :desc "Important"}]
-             :projects [#:project{:id 1 :desc "Home"}
-                        #:project{:id 2 :desc "Work"}]
-             :calendar {:calendar-items [#:calendar-item{:id 1 :desc "Daily Sprint" :start-tiem "9:00am" :end-time "9:15am"}]}
-             })}
+   (fn [_]
+     {:selected-list :today
+      :task-filters  {:projects [[:project/id 1] [:project/id 2]]
+                      :tags     [[:tag/id 1] [:tag/id 2]]}
+      :today         {:tasks   [#:task{:id 1 :desc "Set up OKR Meetings" :status :not-started :link "www.kosmotime.com"}
+                                #:task{:id 2 :desc "Checklist for the PH" :status :not-started :link "www.kosmotime.com" :tags [#:tag{:id 1 :desc "Urgent"}]}
+                                #:task{:id 3 :desc "LinkedIn Strategy" :status :not-started :link "www.linkedin.com"}]
+                      :sprints [#:sprint{:id 1 :desc "App Related Sprint"
+                                         :tasks
+                                         [#:task{:id 4 :desc "Set up OKR Meetings" :status :not-started :link "www.kosmotime.com"}
+                                          #:task{:id 5 :desc "Checklist for the PH" :status :not-started :link "www.kosmotime.com" :tags [#:tag{:id 1 :desc "Urgent"}]}
+                                          #:task{:id 6 :desc "LinkedIn Strategy" :status :not-started :link "www.linkedin.com"}]}
+                                #:sprint{:id 2 :desc "Planning for the New Website" :tasks []}
+                                #:sprint{:id 3 :desc "Product Strategy" :tasks []}]
+                      }
+      :tags          [#:tag{:id 1 :desc "Urgent"}
+                      #:tag{:id 2 :desc "Important"}]
+      :projects      [#:project{:id 1 :desc "Home"}
+                      #:project{:id 2 :desc "Work"}]
+      :calendar      {:calendar-items [#:calendar-item{:id 1 :desc "Daily Sprint" :start-tiem "9:00am" :end-time "9:15am"}]}
+      })}
   (div {:style {:border "1px dashed", :borderColor "blue" :margin "1em", :padding "1em"}}
-       (div :.ui.container
-            (div :.ui.grid
-                 (div :.three.wide.computer.column
-                      (ui-menu task-filters))
-                 (div :.ten.wide.computer.column
-                      (cond
-                        (= selected-list :today) (ui-today today)))
-                 (div :.three.wide.computer.column
-                      (ui-calendar calendar))))))
+    (div :.ui.container
+      (div :.ui.grid
+        (div :.three.wide.computer.column
+          (ui-menu task-filters))
+        (div :.ten.wide.computer.column
+          (cond
+            (= selected-list :today) (ui-today today)))
+        (div :.three.wide.computer.column
+          (ui-calendar calendar))))))
 
 (comment
   (cljs.pprint/write {:a 1 :b 2} :stream nil)
