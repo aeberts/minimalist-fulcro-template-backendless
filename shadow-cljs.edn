@@ -14,7 +14,7 @@
                                                  com.fulcrologic.fulcro.inspect.preload
                                                  com.fulcrologic.fulcro.inspect.dom-picker-preload]
                                     :after-load com.example.client/refresh}
-                       :closure-defines {goog.DEBUG false}}
+                       :closure-defines {goog.DEBUG true}}
 
             #_#_
             :workspaces {:target     nubank.workspaces.shadow-cljs.target

@@ -26,7 +26,7 @@
     ;;(df/load! app :all-sprints ui/Sprint)
     ;;(df/load! app :all-projects ui/Project)
     (df/load! app :left-sidebar ui/Menu)
-    (df/load! app :today ui/TodayPane)
+    (df/load! app :today ui/Today)
     )
 
   (app/mount! app
