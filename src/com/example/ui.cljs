@@ -45,10 +45,10 @@
                    {[:tasks '_] (comp/get-query Task)}]
    :ident         (fn [] [:component/id ::today-pane])
    :initial-state (fn [params] {:sprints (comp/get-initial-state Sprint)
-                                :tasks   (comp/get-initial-state Task)})
-   }
+                                :tasks   (comp/get-initial-state Task)})}
+
   (div
-    (p "Today Panel props: " props)))
+    (p "Today Panel")))
 
 (def ui-today-pane (comp/factory TodayPane))
 
@@ -75,32 +75,42 @@
                    {:today (comp/get-query TodayPane)}
                    {:uncategorized (comp/get-query Uncategorized)}
                    {:projects (comp/get-query Project)}
-                   {:tags (comp/get-query Tag)}
-                   ]
+                   {:tags (comp/get-query Tag)}]
+
    :ident         (fn [] [:component/id :Menu])
    :initial-state (fn [params] {:today         (comp/get-initial-state TodayPane)
-                                :uncategorized (comp/get-initial-state Uncategorized)})
-   }
+                                :uncategorized (comp/get-initial-state Uncategorized)})}
+
   (div
-    ;(pre "Menu props: \n " (pp/write props :stream nil))
-    ))
+    (p "Menu Pane")))
 
 (def ui-menu (comp/factory Menu))
 
-;;(defsc CalendarPane [this {:keys [:id    ] :as props}]
-;;  {:query [:id    ]
-;;   :ident :id
-;;   :initial-state {}}
-;;  (dom/div ))
-;;
-;;(def ui-calendar-pane (comp/factory CalendarPane))
+(defsc CalendarItem [this {:calendar-item/keys [id desc start-time end-time] :as props}]
+  {:query [:calendar-item/id :calendar-item/desc :calendar-item/start-time :calendar-item/end-time]
+   :ident :calendar-item/id
+   :initial-state (fn [params] {})}
+  (div
+    (p "Calendar item")))
 
-(defsc Root [this {:keys [task-filters selected-list sprints tasks today] :as props}]
+(def ui-calender-item (comp/factory CalendarItem {:keyfn :id}))
+
+(defsc CalendarPane [this {:keys [:calendar-items] :as props}]
+  {:query [{:calendar-items (comp/get-query CalendarItem)}]
+   :ident (fn [] [:component/id :Calendar])
+   :initial-state (fn [params] {:calendar {}} )}
+  (dom/div
+    (p "Calender Pane")))
+
+(def ui-calendar-pane (comp/factory CalendarPane))
+
+(defsc Root [this {:keys [task-filters selected-list sprints tasks today calendar] :as props}]
   {:query [:selected-list
            {:task-filters (comp/get-query Menu)}
            {:tasks (comp/get-query Task)}
            {:sprints (comp/get-query Sprint)}
-           {:today (comp/get-query TodayPane)}]
+           {:today (comp/get-query TodayPane)}
+           {:calendar (comp/get-query CalendarPane)}]
    :initial-state
           (fn [_]
             {:selected-list :today
@@ -118,27 +128,21 @@
                                                      #:task{:id 3 :desc "LinkedIn Strategy" :status :not-started :link "www.linkedin.com"}]}
                                        #:sprint{:id 2 :desc "Planning for the New Website" :tasks []}
                                        #:sprint{:id 3 :desc "Product Strategy" :tasks []}]}
-
-             }
-            )
-   }
-  (div {:style {:border "1px dashed", :borderColor "red" :margin "1em", :padding "1em"}}
-    (p "Left Menu Pane:")
-    (div :.ui-container
-      (div :.ui-grid
-        (div :.sixteen.wide.mobile.four.wide.computer.column
-          (ui-menu task-filters))
-        (div :.sixteen.wide.mobile.twelve.wide.computer.column
-          (cond
-            (= selected-list :today) (ui-today-pane today)))
-
-        ))))
+             :calendar {:calendar-items [#:calendar-item{:id 1 :desc "Daily Sprint" :start-tiem "9:00am" :end-time "9:15am"}]}
+             })}
+  (div {:style {:border "1px dashed", :borderColor "blue" :margin "1em", :padding "1em"}}
+       (div :.ui.container
+            (div :.ui.grid
+                 (div :.three.wide.computer.column
+                      (ui-menu task-filters))
+                 (div :.ten.wide.computer.column
+                      (cond
+                        (= selected-list :today) (ui-today-pane today)))
+                 (div :.three.wide.computer.column
+                      (ui-calendar-pane calendar))))))
 
 (comment
-
-  (cljs.pprint/write {:a 1 :b 2} :stream nil)
-
-  )
+  (cljs.pprint/write {:a 1 :b 2} :stream nil))
 
 (defn check-props
   "Check the state for particular component
@@ -157,6 +161,5 @@
 
 (comment
 
-  (check-props com.example.app/app Root)
+  (check-props com.example.app/app Root))
 
-  )
