@@ -26,9 +26,7 @@
   {:query         [:task/id :task/desc :task/status :task/link {:task/tags (comp/get-query Tag)}]
    :ident         :task/id
    :initial-state {}}
-  (div
-    (p "Task: ")
-    (pre (pp/write props :stream nil))))
+  (div ))
 
 (def ui-task (comp/factory Task {:keyfn :task/id}))
 
@@ -42,25 +40,25 @@
 
 (def ui-sprint (comp/factory Sprint {:keyfn :sprint/id}))
 
-(defsc Uncategorized [this {:keys [tasks] :as props}]
-  {:query         [{:tasks (comp/get-query Task)}]
-   :ident         (fn [] [:component/id ::uncategorized])
-   :initial-state {}}
-  (div
-    (pre (pp/write props :stream nil))))
-
-(def ui-uncategorized (comp/factory Uncategorized))
+;;(defsc Uncategorized [this {:keys [tasks] :as props}]
+;;  {:query         [{:tasks (comp/get-query Task)}]
+;;   :ident         (fn [] [:component/id ::uncategorized])
+;;   :initial-state {}}
+;;  (div
+;;    (pre (pp/write props :stream nil))))
+;;
+;;(def ui-uncategorized (comp/factory Uncategorized))
 
 (defsc Project [this {:project/keys [id desc tasks] :as props}]
   {:query         [:project/id :project/desc {:project/tasks (comp/get-query Task)}]
    :ident         :project/id
    :initial-state (fn [params] {:project/tasks (comp/get-initial-state Task)})}
   (div
-    (p "Project")
-    (pre (pp/write props :stream nil))
-    ))
+    ;(p "Project")
+    ;(pre (pp/write props :stream nil))
+    (p desc)))
 
-(def ui-project (comp/factory Project {:keyfn :id}))
+(def ui-project (comp/factory Project {:keyfn :project/id}))
 
 (defsc CalendarItem [this {:calendar-item/keys [id desc start-time end-time] :as props}]
   {:query         [:calendar-item/id :calendar-item/desc :calendar-item/start-time :calendar-item/end-time]
@@ -87,8 +85,9 @@
    :initial-state (fn [params] {:tasks   {}
                                 :sprints {}})}
   (div
-    (p "Today Pane")
-    ;;(pre (pp/write (str props) :stream nil))
+    (p "Tasks: ")
+    (map ui-task tasks)
+    ;(pre (pp/write (str props) :stream nil))
     ))
 
 (def ui-today (comp/factory Today))
@@ -100,8 +99,9 @@
    :initial-state (fn [params] {:projects {}
                                 :tags     {}})}
   (div
-    (p "Menu Pane")
-    ;(pre (pp/write (str props) :stream nil))
+    ;(p "Menu Pane")
+    ;(pre (with-out-str (pp/pprint props)))
+    (map ui-project projects)
     ))
 
 (def ui-menu (comp/factory Menu))
@@ -110,29 +110,30 @@
   {:query [:selected-list
            {:task-filters (comp/get-query Menu)}
            {:today (comp/get-query Today)}
-           {:calendar (comp/get-query Calendar)}]
+           {:calendar (comp/get-query Calendar)}
+           {:tags (comp/get-query Tag)}
+           {:projects (comp/get-query Project)}]
    :initial-state
    (fn [_]
      {:selected-list :today
       :task-filters  {:projects [[:project/id 1] [:project/id 2]]
                       :tags     [[:tag/id 1] [:tag/id 2]]}
-      :today         {:tasks   [#:task{:id 1 :desc "Set up OKR Meetings" :status :not-started :link "www.kosmotime.com"}
+      :today         {:tasks   [#:task{:id 1 :desc "Set up OKR Meetings" :status :not-started :link "www.kosmotime.com" :tags []}
                                 #:task{:id 2 :desc "Checklist for the PH" :status :not-started :link "www.kosmotime.com" :tags [#:tag{:id 1 :desc "Urgent"}]}
-                                #:task{:id 3 :desc "LinkedIn Strategy" :status :not-started :link "www.linkedin.com"}]
+                                #:task{:id 3 :desc "LinkedIn Strategy" :status :not-started :link "www.linkedin.com" :tags []}]
                       :sprints [#:sprint{:id 1 :desc "App Related Sprint"
                                          :tasks
-                                         [#:task{:id 4 :desc "Set up OKR Meetings" :status :not-started :link "www.kosmotime.com"}
+                                         [#:task{:id 4 :desc "Set up OKR Meetings" :status :not-started :link "www.kosmotime.com" :tags []}
                                           #:task{:id 5 :desc "Checklist for the PH" :status :not-started :link "www.kosmotime.com" :tags [#:tag{:id 1 :desc "Urgent"}]}
-                                          #:task{:id 6 :desc "LinkedIn Strategy" :status :not-started :link "www.linkedin.com"}]}
+                                          #:task{:id 6 :desc "LinkedIn Strategy" :status :not-started :link "www.linkedin.com" :tags []}]}
                                 #:sprint{:id 2 :desc "Planning for the New Website" :tasks []}
                                 #:sprint{:id 3 :desc "Product Strategy" :tasks []}]
                       }
       :tags          [#:tag{:id 1 :desc "Urgent"}
                       #:tag{:id 2 :desc "Important"}]
-      :projects      [#:project{:id 1 :desc "Home"}
-                      #:project{:id 2 :desc "Work"}]
-      :calendar      {:calendar-items [#:calendar-item{:id 1 :desc "Daily Sprint" :start-tiem "9:00am" :end-time "9:15am"}]}
-      })}
+      :projects      [#:project{:id 1 :desc "Home" :tasks [[:task/id 1] [:task/id 2]]}
+                      #:project{:id 2 :desc "Work" :tasks [[:task/id 3] [:task/id 4]]}]
+      :calendar      {:calendar-items [#:calendar-item{:id 1 :desc "Daily Sprint" :start-tiem "9:00am" :end-time "9:15am"}]}})}
   (div {:style {:border "1px dashed", :borderColor "blue" :margin "1em", :padding "1em"}}
     (div :.ui.container
       (div :.ui.grid

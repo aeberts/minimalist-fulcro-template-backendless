@@ -1,22 +1,30 @@
-{:deps     {:aliases [:dev]} ; indicate vi use tools-deps; aliases ignored b/c I invoke clj myself
- :http     {:port 9631} ; shadow control server
+{:deps     {:aliases [:dev]}                                ; indicate vi use tools-deps; aliases ignored b/c I invoke clj myself
+ :http     {:port 9631}                                     ; shadow control server
  :nrepl    {:port 9001}
  :dev-http {8000 "resources/public"}
  :jvm-opts ["-Xmx2G"]
- :builds   {:main     {:target     :browser
-                       :output-dir "resources/public/js/main"
-                       :asset-path "/js/main"
-                       :dev        {:compiler-options {:external-config {:guardrails {:emit-spec? true :throw? false}}}}
-                       :release    {:compiler-options {:source-map true}}
-                       :modules    {:main {:init-fn com.example.client/init}}
-                       :devtools   {:preloads   [shadow.remote.runtime.cljs.browser ; Shadow Inspect tab support
-                                                 holyjak.fulcro-troubleshooting ; optional, to find mistakes faster
-                                                 com.fulcrologic.fulcro.inspect.preload
-                                                 com.fulcrologic.fulcro.inspect.dom-picker-preload]
-                                    :after-load com.example.client/refresh}
-                       :closure-defines {goog.DEBUG true}}
-
-            #_#_
+ :builds   {:dev        {:target          :browser
+                         :output-dir      "resources/public/js/main"
+                         :asset-path      "/js/main"
+                         :dev             {:compiler-options {:external-config {:guardrails {:emit-spec? true :throw? false}}}}
+                         :release         {:compiler-options {:source-map true}}
+                         :modules         {:main {:init-fn com.example.client/init}}
+                         :devtools        {:preloads   [shadow.remote.runtime.cljs.browser ; Shadow Inspect tab support
+                                                        com.fulcrologic.fulcro.inspect.preload
+                                                        ;com.fulcrologic.fulcro.inspect.websocket-preload
+                                                        com.fulcrologic.fulcro.inspect.dom-picker-preload
+                                                        ;holyjak.fulcro-troubleshooting ; optional, to find mistakes faster
+                                                        ]
+                                           :after-load com.example.client/refresh}
+                         ;;
+                         :closure-defines {goog.DEBUG true}}
+            :prod       {:target          :browser
+                         :output-dir      "resources/public/js/main"
+                         :asset-path      "/js/main"
+                         :release         {:compiler-options {:source-map false}}
+                         :modules         {:main {:init-fn com.example.client/init}}
+                         :after-load      com.example.client/refresh
+                         :closure-defines {goog.DEBUG false}}
             :workspaces {:target     nubank.workspaces.shadow-cljs.target
                          :ns-regexp  "-(test|ws)$"
                          :output-dir "resources/public/workspaces/js"
@@ -24,4 +32,7 @@
                          :devtools   {:preloads           [com.fulcrologic.fulcro.inspect.preload]
                                       :http-root          "resources/public/workspaces"
                                       :http-port          8023
-                                      :http-resource-root "."}}}}
+                                      :http-resource-root "."}}
+            }
+ }
+
