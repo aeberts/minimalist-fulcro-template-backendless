@@ -3,7 +3,7 @@
  :nrepl    {:port 9001}
  :dev-http {8000 "resources/public"}
  :jvm-opts ["-Xmx2G"]
- :builds   {:dev        {:target          :browser
+ :builds   {:main        {:target          :browser
                          :output-dir      "resources/public/js/main"
                          :asset-path      "/js/main"
                          :dev             {:compiler-options {:external-config {:guardrails {:emit-spec? true :throw? false}}}}
@@ -13,7 +13,7 @@
                                                         com.fulcrologic.fulcro.inspect.preload
                                                         ;com.fulcrologic.fulcro.inspect.websocket-preload
                                                         com.fulcrologic.fulcro.inspect.dom-picker-preload
-                                                        ;holyjak.fulcro-troubleshooting ; optional, to find mistakes faster
+                                                        holyjak.fulcro-troubleshooting ; optional, to find mistakes faster
                                                         ]
                                            :after-load com.example.client/refresh}
                          ;;

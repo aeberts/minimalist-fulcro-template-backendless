@@ -40,22 +40,13 @@
 
 (def ui-sprint (comp/factory Sprint {:keyfn :sprint/id}))
 
-;;(defsc Uncategorized [this {:keys [tasks] :as props}]
-;;  {:query         [{:tasks (comp/get-query Task)}]
-;;   :ident         (fn [] [:component/id ::uncategorized])
-;;   :initial-state {}}
-;;  (div
-;;    (pre (pp/write props :stream nil))))
-;;
-;;(def ui-uncategorized (comp/factory Uncategorized))
+;; QUESTION: ask Jakub how to compose :initial-state for Project
 
 (defsc Project [this {:project/keys [id desc tasks] :as props}]
   {:query         [:project/id :project/desc {:project/tasks (comp/get-query Task)}]
    :ident         :project/id
    :initial-state (fn [params] {:project/tasks (comp/get-initial-state Task)})}
   (div
-    ;(p "Project")
-    ;(pre (pp/write props :stream nil))
     (p desc)))
 
 (def ui-project (comp/factory Project {:keyfn :project/id}))
@@ -73,8 +64,20 @@
   {:query         [{:calendar-items (comp/get-query CalendarItem)}]
    :ident         (fn [] [:component/id ::Calendar])
    :initial-state {}}
-  (dom/div
-    (p "Calendar Pane")))
+  (div :.ui.grid
+    (div :.ui.equal.width.row
+      (div :.ui.column.left.floated.center.aligned
+        (p "Week"))
+      (div :.ui.column.right.floated.center.aligned
+        (p "Day")))
+    (div :.ui.row
+      (div :.ui.three.wide.column
+        (p "<"))
+      (div :.ui.ten.wide.column.center.aligned
+        (p "Nov 11, 2021"))
+      (div :.ui.three.wide.column.floated.right.right.aligned
+        (p ">"))
+      )))
 
 (def ui-calendar (comp/factory Calendar))
 
@@ -84,11 +87,28 @@
    :ident         (fn [] [:component/id ::Today])
    :initial-state (fn [params] {:tasks   {}
                                 :sprints {}})}
-  (div
-    (p "Tasks: ")
-    (map ui-task tasks)
-    ;(pre (pp/write (str props) :stream nil))
-    ))
+  (div :.ui.grid
+    (div :.ui.row
+      (div :.ui.four.wide.column.floated.left
+        (p "< Archive"))
+      (div :.ui.eight.wide.center.aligned.column
+        (h2 "Today"))
+      (div :.ui.four.wide.column.floated.right.aligned.right
+        (p "This Week >")))
+    (div :.ui.row
+      (h3 "Sprints"))
+    (div :.ui.row
+      (p "Sprints UI"))
+    (div :.ui.row.sixteen.wide.column
+      (div :.ui.container.center.aligned
+        (p "Create Sprint")))
+    (div :.ui.row
+      (h3 "Tasks"))
+    (div :.ui.row
+      (p "Tasks UI"))
+    (div :.ui.row.sixteen.wide.column
+      (div :.ui.container.center.aligned
+        (p "Add a Task")))))
 
 (def ui-today (comp/factory Today))
 
@@ -97,12 +117,11 @@
                    {:tags (comp/get-query Tag)}]
    :ident         (fn [] [:component/id ::Menu])
    :initial-state (fn [params] {:projects {}
-                                :tags     {}})}
+                                :tags     {}}
+                    )}
   (div
-    ;(p "Menu Pane")
-    ;(pre (with-out-str (pp/pprint props)))
-    (map ui-project projects)
-    ))
+    (h1 "Icon")
+    (map ui-project projects)))
 
 (def ui-menu (comp/factory Menu))
 
@@ -116,7 +135,7 @@
    :initial-state
    (fn [_]
      {:selected-list :today
-      :task-filters  {:projects [[:project/id 1] [:project/id 2]]
+      :task-filters  {:projects [[:project/id 1] [:project/id 2] [:project/id 3] [:project/id 4]]
                       :tags     [[:tag/id 1] [:tag/id 2]]}
       :today         {:tasks   [#:task{:id 1 :desc "Set up OKR Meetings" :status :not-started :link "www.kosmotime.com" :tags []}
                                 #:task{:id 2 :desc "Checklist for the PH" :status :not-started :link "www.kosmotime.com" :tags [#:tag{:id 1 :desc "Urgent"}]}
@@ -131,9 +150,13 @@
                       }
       :tags          [#:tag{:id 1 :desc "Urgent"}
                       #:tag{:id 2 :desc "Important"}]
-      :projects      [#:project{:id 1 :desc "Home" :tasks [[:task/id 1] [:task/id 2]]}
-                      #:project{:id 2 :desc "Work" :tasks [[:task/id 3] [:task/id 4]]}]
-      :calendar      {:calendar-items [#:calendar-item{:id 1 :desc "Daily Sprint" :start-tiem "9:00am" :end-time "9:15am"}]}})}
+      :projects      [#:project{:id 1 :desc "Today" :tasks [[:task/id 1] [:task/id 2]]}
+                      #:project{:id 2 :desc "Uncategorized" :tasks [[:task/id 3] [:task/id 4]]}
+                      #:project{:id 3 :desc "Projects" :tasks [[:task/id 4] [:task/id 5]]}
+                      #:project{:id 4 :desc "Tags" :tasks [[:task/id 6]]}
+                      ]
+      :calendar      {:calendar-items [#:calendar-item{:id 1 :desc "Daily Sprint" :start-tiem "9:00am" :end-time "9:15am"}]}
+      })}
   (div {:style {:border "1px dashed", :borderColor "blue" :margin "1em", :padding "1em"}}
     (div :.ui.container
       (div :.ui.grid
@@ -146,25 +169,14 @@
           (ui-calendar calendar))))))
 
 (comment
-  (cljs.pprint/write {:a 1 :b 2} :stream nil)
+
+  (check-props com.example.app/app Root)
+
+  (comp/props
+    (comp/class->any com.example.app/app com.example.ui/Project))
+
+  (comp/props
+    (comp/class->any com.example.app/app com.example.ui/Menu))
+
   )
-
-(defn check-props
-  "Check the state for particular component
-  app is usually at com.example.app/app or similar
-  From: https://github.com/holyjak/blog.jakubholy.net/blob/master/content/asc/posts/2020/troubleshooting-fulcro.asc"
-  ([app]
-   (check-props app Root))
-  ([app comp]
-   (let [state (app/current-state app)]
-     (com.fulcrologic.fulcro.algorithms.denormalize/db->tree
-       (comp/get-query comp)                                ; or any component
-       ;; Starting entity, state itself for Root
-       ;; otherwise something like (get-in state-map [:thing/id 1]):
-       state
-       state))))
-
-(comment
-
-  (check-props com.example.app/app Root))
 

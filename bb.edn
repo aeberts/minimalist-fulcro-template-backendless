@@ -4,6 +4,6 @@
   npm-inst (when-not (fs/directory? "node_modules")
              (println "INFO: node_modules/ not found, running install...")
              (shell "npm install"))
-  dev {:depends [npm-inst], :task (shell "npx shadow-cljs watch dev")}
+  main {:depends [npm-inst], :task (shell "npx shadow-cljs watch main")}
   prod {:depends [npm-inst], :task (shell "npx shadow-cljs watch prod")}
   build {:depends [npm-inst], :task (shell "npx shadow-cljs release prod")}}}

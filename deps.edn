@@ -9,8 +9,9 @@
         ;; For simplicity, we include this dev dependency here:
         holyjak/fulcro-troubleshooting {:git/url "https://github.com/holyjak/fulcro-troubleshooting"
                                         ;; run `clojure -X:deps git-resolve-tags` to insert the correct :sha
-                                        :sha "943e632d076d83d70f828887b079a53ea06bb83d"
-                                        :tag "latest"}}
+                                        :sha "03a5fc5ac8fda5fd81a6b96bfdaa5ce8f3bdb1fa"
+                                        ;:tag "latest"
+                                        }}
  :aliases
  {:dev {:extra-deps {thheller/shadow-cljs                {:mvn/version "2.15.5"}
                      binaryage/devtools                  {:mvn/version "1.0.0"}

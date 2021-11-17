@@ -6,6 +6,7 @@
    [com.fulcrologic.fulcro.components :as comp]
    [com.fulcrologic.fulcro.routing.dynamic-routing :as dr]
    [com.fulcrologic.fulcro.data-fetch :as df]
+   [holyjak.fulcro-troubleshooting]
    ))
 
 (defn ^:export init
@@ -33,6 +34,9 @@
               (app/root-class app)
               "app"
               {:initialize-state? false})
+
+  ;; Workaround for bug #6 which causes fulcro-troubleshooting to interfere with fulcro-inspect dom picker
+  (set! holyjak.fulcro-troubleshooting/*config* {:error-boundaries? false})
   )
 
 (defn ^:export refresh 
