@@ -9,6 +9,7 @@
     [com.fulcrologic.fulcro.algorithms.normalized-state :as norm]
     [com.fulcrologic.fulcro.components :as comp :refer [defsc transact!]]
     [com.fulcrologic.fulcro.raw.components :as rc]
+    [com.fulcrologic.semantic-ui.factories :as sui]
     [com.fulcrologic.fulcro.data-fetch :as df]
     [com.fulcrologic.fulcro.dom :as dom :refer [button div form h1 h2 h3 input label li ol p ul pre]]))
 
@@ -101,14 +102,14 @@
       (p "Sprints UI"))
     (div :.ui.row.sixteen.wide.column
       (div :.ui.container.center.aligned
-        (p "Create Sprint")))
+        (sui/ui-button {:content "Create Sprint"})))
     (div :.ui.row
       (h3 "Tasks"))
     (div :.ui.row
       (p "Tasks UI"))
     (div :.ui.row.sixteen.wide.column
       (div :.ui.container.center.aligned
-        (p "Add a Task")))))
+        (sui/ui-button {:content "Add a Task"})))))
 
 (def ui-today (comp/factory Today))
 
