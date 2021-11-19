@@ -73,12 +73,12 @@
       (div :.ui.column #js {:style #js {:padding-left "0px" :padding-right "0px"}}
         (sui/ui-button {:content "Day" :floated :right})))
     (div :.row
-      (div :.ui.three.wide.column #js {:style #js {:padding-left "0px" :padding-right "0px"}}
+      (div :.ui.four.wide.column #js {:style #js {:padding-left "0px" :padding-right "0px"}}
         (sui/ui-button {:paddingLeft 0 :size "mini" :content "<" :floated :left}))
-      (div :.ui.ten.wide.center.aligned.column
+      (div :.ui.eight.wide.center.aligned.column #js {:style #js {:padding-left "0px" :padding-right "0px"}}
         (p "Nov. 21, 2021"))
-      (div :.ui.three.wide.column
-        (sui/ui-button {:size "mini" :content ">"})))))
+      (div :.ui.four.wide.column #js {:style #js {:padding-left "0px" :padding-right "0px"}}
+        (sui/ui-button {:size "mini" :content ">" :floated :right})))))
 
 (def ui-calendar (comp/factory Calendar))
 
@@ -158,7 +158,7 @@
                       ]
       :calendar      {:calendar-items [#:calendar-item{:id 1 :desc "Daily Sprint" :start-tiem "9:00am" :end-time "9:15am"}]}
       })}
-  (div {:style {:border "1px dashed", :borderColor "blue" :margin "1em", :padding "1em"}}
+  (div {:style {:margin "1em", :padding "1em"}}
     (div :.ui.container
       (div :.ui.grid
         (div :.three.wide.computer.column
