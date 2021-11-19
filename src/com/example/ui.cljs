@@ -26,8 +26,9 @@
 (defsc Task [this {:task/keys [id desc status link tags] :as props}]
   {:query         [:task/id :task/desc :task/status :task/link {:task/tags (comp/get-query Tag)}]
    :ident         :task/id
-   :initial-state {}}
-  (div ))
+   :initial-state (fn [params] {:task/tags {}})
+   }
+  (div))
 
 (def ui-task (comp/factory Task {:keyfn :task/id}))
 
@@ -64,21 +65,20 @@
 (defsc Calendar [this {:keys [:calendar-items] :as props}]
   {:query         [{:calendar-items (comp/get-query CalendarItem)}]
    :ident         (fn [] [:component/id ::Calendar])
-   :initial-state {}}
+   :initial-state (fn [params] {:calendar-items {}})}
   (div :.ui.grid
-    (div :.ui.equal.width.row
-      (div :.ui.column.left.floated.center.aligned
-        (p "Week"))
-      (div :.ui.column.right.floated.center.aligned
-        (p "Day")))
-    (div :.ui.row
+    (div :.equal.width.row
+      (div :.ui.column #js {:style #js {:padding-left "0px" :padding-right "0px"}}
+        (sui/ui-button {:content "Week"}))
+      (div :.ui.column #js {:style #js {:padding-left "0px" :padding-right "0px"}}
+        (sui/ui-button {:content "Day" :floated :right})))
+    (div :.row
+      (div :.ui.three.wide.column #js {:style #js {:padding-left "0px" :padding-right "0px"}}
+        (sui/ui-button {:paddingLeft 0 :size "mini" :content "<" :floated :left}))
+      (div :.ui.ten.wide.center.aligned.column
+        (p "Nov. 21, 2021"))
       (div :.ui.three.wide.column
-        (p "<"))
-      (div :.ui.ten.wide.column.center.aligned
-        (p "Nov 11, 2021"))
-      (div :.ui.three.wide.column.floated.right.right.aligned
-        (p ">"))
-      )))
+        (sui/ui-button {:size "mini" :content ">"})))))
 
 (def ui-calendar (comp/factory Calendar))
 
@@ -91,11 +91,11 @@
   (div :.ui.grid
     (div :.ui.row
       (div :.ui.four.wide.column.floated.left
-        (p "< Archive"))
+        (sui/ui-button {:content "< Archive"}))
       (div :.ui.eight.wide.center.aligned.column
         (h2 "Today"))
       (div :.ui.four.wide.column.floated.right.aligned.right
-        (p "This Week >")))
+        (sui/ui-button {:content "This Week >"})))
     (div :.ui.row
       (h3 "Sprints"))
     (div :.ui.row
@@ -166,7 +166,7 @@
         (div :.ten.wide.computer.column
           (cond
             (= selected-list :today) (ui-today today)))
-        (div :.three.wide.computer.column
+        (div :.three.wide.ui.column
           (ui-calendar calendar))))))
 
 (comment
