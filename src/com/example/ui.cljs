@@ -8,10 +8,14 @@
     [com.fulcrologic.fulcro.algorithms.data-targeting :as targeting]
     [com.fulcrologic.fulcro.algorithms.normalized-state :as norm]
     [com.fulcrologic.fulcro.components :as comp :refer [defsc transact!]]
+    [com.fulcrologic.fulcro.algorithms.react-interop :as interop]
     [com.fulcrologic.fulcro.raw.components :as rc]
     [com.fulcrologic.semantic-ui.factories :as sui]
     [com.fulcrologic.fulcro.data-fetch :as df]
-    [com.fulcrologic.fulcro.dom :as dom :refer [button div form h1 h2 h3 input label li ol p ul pre]]))
+    [com.fulcrologic.fulcro.dom :as dom :refer [button div form h1 h2 h3 input label li ol p ul pre]]
+    ["dayz" :as dayz]
+    ["moment" :as moment])
+  )
 
 (defsc Tag [this {:tag/keys [:id :desc] :as props}]
   {:query         [:tag/id :tag/desc]
@@ -62,23 +66,27 @@
 
 (def ui-calender-item (comp/factory CalendarItem {:keyfn :id}))
 
+(def ui-calendar-react (interop/react-factory dayz))
+
 (defsc Calendar [this {:keys [:calendar-items] :as props}]
   {:query         [{:calendar-items (comp/get-query CalendarItem)}]
    :ident         (fn [] [:component/id ::Calendar])
    :initial-state (fn [params] {:calendar-items {}})}
   (div :.ui.grid
     (div :.equal.width.row
-      (div :.ui.column #js {:style #js {:padding-left "0px" :padding-right "0px"}}
+      (div :.ui.column
         (sui/ui-button {:content "Week"}))
-      (div :.ui.column #js {:style #js {:padding-left "0px" :padding-right "0px"}}
+      (div :.ui.column
         (sui/ui-button {:content "Day" :floated :right})))
     (div :.row
-      (div :.ui.four.wide.column #js {:style #js {:padding-left "0px" :padding-right "0px"}}
-        (sui/ui-button {:paddingLeft 0 :size "mini" :content "<" :floated :left}))
-      (div :.ui.eight.wide.center.aligned.column #js {:style #js {:padding-left "0px" :padding-right "0px"}}
+      (div :.ui.four.wide.column
+        (sui/ui-button {:paddingleft 0 :size "mini" :content "<" :floated :left}))
+      (div :.ui.eight.wide.center.aligned.column
         (p "Nov. 21, 2021"))
-      (div :.ui.four.wide.column #js {:style #js {:padding-left "0px" :padding-right "0px"}}
-        (sui/ui-button {:size "mini" :content ">" :floated :right})))))
+      (div :.ui.four.wide.column
+        (sui/ui-button {:size "mini" :content ">" :floated :right})))
+    (div :.row
+      (ui-calendar-react {:display "day" :date (moment "2021/11/19") :events (dayz/EventsCollection. [])}))))
 
 (def ui-calendar (comp/factory Calendar))
 

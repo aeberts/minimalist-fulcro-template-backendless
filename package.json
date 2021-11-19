@@ -3,6 +3,8 @@
   "version": "1.0.0",
   "author": "Jakub Holý <jakubholy@jakubholy.net> (https://blog.jakubholy.net)",
   "dependencies": {
+    "dayz": "^2.9.1",
+    "moment": "^2.29.1",
     "react": "^17.0.1",
     "react-dom": "^17.0.1"
   },
