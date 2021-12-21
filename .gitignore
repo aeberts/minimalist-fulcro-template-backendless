@@ -13,8 +13,10 @@
 .clj-kondo/.cache/
 .shadow-cljs/
 resources/public/js/
+resources/public/.DS_Store
 node_modules
 .idea/
 *.iml
 .gitignore.swp
 package-lock.json
+.DS_Store
